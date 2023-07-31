@@ -37,7 +37,7 @@ class Pipeline:
         std = self._data['price'].pct_change().std()
 
         # get last price
-        last_price = self._data['price'].iloc[-1]
+        last_price = self._pool.get_current_price(self._loader.decimals_diff)
 
         std_count = self._config.DP_COUNT
         range_lower, range_upper = (last_price - std_count * std * last_price, last_price + std_count * std * last_price)
@@ -72,11 +72,3 @@ def build_arb_pipeline(config: Config, pool_address: str, node: str, loader_type
     pipeline.add_loader(loader)
 
     return pipeline
-
-
-if __name__ == "__main__":
-    config = Config(TIME_RANGE=96, DP_COUNT=10)
-    NODE = "https://arbitrum-mainnet.infura.io/v3/3c9943304cf64593a4013a87cc5fd3f5"
-    POOL = "0xc6f780497a95e246eb9449f5e4770916dcd6396a"
-    pipeline = build_arb_pipeline(config, POOL, NODE)
-    print(pipeline.start())
